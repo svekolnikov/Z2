@@ -5,7 +5,7 @@
 static long long unsigned int SEED = 0x1;
 
 enum Cell{
-    EMPTY,
+    EMPTY = 0,
     PLAYER1,
     PLAYER2,
     BLOCK,
@@ -20,7 +20,11 @@ int GetRandom(int from, int to)
     SEED = SEED * 16807 % R_MAX;
     return from + (int) SEED % (to - from + 1);
 }
-
+void SetTwoRandoms(int *r1, int *r2)
+{
+    *r1 = GetRandom(1, 6);
+    *r2 = GetRandom(1, 6);
+}
 int IsFree(int *field, int pos)
 {
     if(field[pos] == 0)
@@ -87,22 +91,27 @@ PrintStep(int round, int player, int posBefore,int boostBefore,int r1,int r2,int
 {
     printf("[%d,%d] [%d,%d] [%d,%d] [%d,%d]\n",round, player,posBefore,boostBefore,r1,r2,posAfter,boostAfter);
 }
+
+int GetPlayerPos(int *field,int n, int player)
+{
+    for(int i=0; i<n; i++)
+    {
+        if(field[i] == player)
+            return i;
+    }
+
+    return -1;
+}
 int main()
 {
     int r1 = 0;
     int r2 = 0;
 
-    int pos1before = 0;
-    int boost1before = 0;
+    int posBefore[2] = {0};
+    int boostBefore[2] = {0};
 
-    int pos1after = 0;
-    int boost1after = 0;
-
-    int pos2before = 0;
-    int boost2before = 0;
-
-    int pos2after = 0;
-    int boost2after = 0;
+    int posAfter[2] = {0};
+    int boostAfter[2] = {0};
 
     int seed = 11;
     int n = 50;
@@ -129,11 +138,39 @@ int main()
     SetBoosts(field, n, m2);
     printf("\n");
 
-
+    int round = 0;
+    int curP = PLAYER1;
     while(1)
     {
-        PrintStep(1,2,3,4,5,6,7,8);
+        curP = 3 - curP;
+
+        posBefore[curP-1] = posAfter[curP-1];
+        boostBefore[curP-1] = boostAfter[curP-1];
+        posBefore[curP-1] = posAfter[curP-1];
+        boostBefore[curP-1] = boostAfter[curP-1];
+
+        SetTwoRandoms(&r1,&r2);
+
+        int curPos = GetPlayerPos(field, n, curP);
+        if(curPos == -1)
+        {
+            int d = 0;
+            if(r1+r2 > 7)
+            {
+                //d = 7 - r1+r2 +
+            }
+        }
+        else
+        {
+
+        }
+
+        round++;
+        PrintStep(round,curP,3,4,r1,r2,7,8);
     }
+
+    //Statistics
+
 
     while(1){}
     return 0;
