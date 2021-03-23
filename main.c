@@ -5,7 +5,7 @@
 static long long unsigned int SEED = 0x1;
 
 enum Cell{
-    EMPTY = 0,
+    EMPTY,
     PLAYER1,
     PLAYER2,
     BLOCK,
@@ -27,7 +27,7 @@ void SetTwoRandoms(int *r1, int *r2)
 }
 int IsFree(int *field, int pos)
 {
-    if(field[pos] == 0)
+    if(field[pos] == EMPTY)
         return 1;
 
     return 0;
@@ -123,7 +123,40 @@ int IsSecondPlayerFaster(int *field, int n, int player)
     return 0;
 }
 
+int GetWinner(int *posAfter)
+{
+    if(posAfter[PLAYER2-1] > posAfter[PLAYER1-1])
+        return PLAYER2;
+    else if(posAfter[PLAYER2-1] < posAfter[PLAYER1-1])
+        return PLAYER1;
 
+    return -1;
+}
+int GetHotspots(int *hotspots, int n)
+{
+    int maxHot = 0;
+    for(int i=0; i<n; i++)
+    {
+        if(hotspots[i] > maxHot)
+            maxHot = hotspots;
+    }
+    return maxHot;
+}
+
+int GetMax(int num1, int num2)
+{
+    if(num1>num2)
+        return num1;
+    else
+        return num2;
+}
+void ExchangePlayers(int *field,int n)
+{
+    int pos1 = GetPlayerPos(field, n, PLAYER1);
+    int pos2 = GetPlayerPos(field, n, PLAYER2);
+    SetCell(field,pos2,PLAYER1);
+    SetCell(field,pos1,PLAYER2);
+}
 int main()
 {
     int r1 = 0;
@@ -149,10 +182,10 @@ int main()
     srnd(seed);
 
     int field[n];
-    for(int i;i<n;i++)
+    for(int i = 0;i<n;i++)
         field[i]=EMPTY;
     int hotspots[n];
-    for(int i;i<n;i++)
+    for(int i = 0;i<n;i++)
         hotspots[i]=EMPTY;
 
     SetBlocks(field, n, m1);
@@ -160,67 +193,99 @@ int main()
     SetBoosts(field, n, m2);
     printf("\n");
 
-    int round = 0;
+    int round = 1;
     int curP = PLAYER1;
-    while(1)
+    while(round < 27)
     {
-        curP = 3 - curP;
-
-        posBefore[curP-1] = posAfter[curP-1];
-        boostBefore[curP-1] = boostAfter[curP-1];
-        posBefore[curP-1] = posAfter[curP-1];
+        posBefore[curP-1] = GetPlayerPos(field,n,curP);
         boostBefore[curP-1] = boostAfter[curP-1];
 
         SetTwoRandoms(&r1,&r2);
 
         int curPos = GetPlayerPos(field, n, curP);
+        int d = 0;
         if(curPos == -1)
         {
-            int d = 0;
             if(r1+r2 > 7)
             {
                 d = r1+r2 -7 + boostBefore[curP-1];
 
                 int nextCell = field[d];
-                if(nextCell == BLOCK)
+                if(nextCell == EMPTY)
+                {
+                    SetPlayerToPos(field,d,curP,hotspots);
+                    posAfter[curP-1] = d;
+                }
+                else if(nextCell == BLOCK)
                 {
                     SetCell(field, d, EMPTY);
                     posAfter[curP-1] = posBefore[curP-1];
                     boostAfter[curP-1] = boostBefore[curP-1] -1;
-                    return;
                 }
                 else if(nextCell == BOOST)
                 {
                     SetCell(field, d, EMPTY);
                     boostAfter[curP-1]++;
                     SetPlayerToPos(field,d,curP,hotspots);
-                    return;
                 }
                 else if(nextCell == 3-curP) // opposite player
                 {
                     SetPlayerToPos(field,d,curP,hotspots);
-                    return;
                 }
             }
         }
-        else
+        else // Player on the field
         {
-            if(((r1 == r2) && r1 == 6)&&IsSecondPlayerFaster(field,n,curP) == 0)
+            if((((r1 == r2) && r1 == 6)&&IsSecondPlayerFaster(field,n,curP) == 0) ||
+               (((r1 == r2) && r1 == 1)&&IsSecondPlayerFaster(field,n,curP) == 1))
             {
+                ExchangePlayers(field,n);
+                posAfter[curP-1] = GetPlayerPos(field,n,curP);
+            }
+
+            d = GetPlayerPos(field,n,curP) + GetMax(r1,r2) + boostBefore[curP-1];
+
+            if(d>n-1) //win
+                break;
+
+            SetCell(field, GetPlayerPos(field,n,curP), EMPTY);
+
+            int nextCell = field[d];
+            if(nextCell == EMPTY)
+            {
+                SetPlayerToPos(field,d,curP,hotspots);
+                posAfter[curP-1] = d;
+            }
+            else if(nextCell == BLOCK)
+            {
+                SetCell(field, d, EMPTY);
+                posAfter[curP-1] = GetPlayerPos(field,n,curP);
+                if(boostBefore[curP-1] > 0)
+                    boostAfter[curP-1] = boostBefore[curP-1] -1;
 
             }
-            if(((r1 == r2) && r1 == 1)&&IsSecondPlayerFaster(field,n,curP) == 1)
+            else if(nextCell == BOOST)
             {
-
+                boostAfter[curP-1]++;
+                SetPlayerToPos(field,d,curP,hotspots);
+                posAfter[curP-1] = d;
+            }
+            else if(nextCell == 3-curP) // opposite player
+            {
+                SetPlayerToPos(field,d,curP,hotspots);
             }
 
         }
 
-        round++;
         PrintStep(round,curP,posBefore[curP-1],boostBefore[curP-1],r1,r2,posAfter[curP-1],boostAfter[curP-1]);
+        curP = 3 - curP;
+        round++;
     }
 
     //Statistics
+    printf("WINNER:%d", GetWinner(posAfter));
+    printf("\n");
+    printf("HOTSPOT:%d", GetHotspots(hotspots,n));
 
 
     while(1){}
