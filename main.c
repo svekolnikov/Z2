@@ -168,16 +168,16 @@ int main()
     int posAfter[2] = {0};
     int boostAfter[2] = {0};
 
-    int seed = 8;
-    int n = 100;
-    int m1 = 0; //block
-    int m2 = 50;  // boost
+    int seed = 515;
+    int n = 51;
+    int m1 = 14; //block
+    int m2 = 8;  // boost
 
     scanf("%d %d %d %d", &seed, &n, &m1, &m2);
 
     //validation
-    if( seed < 0 || n < 10 || n > 100 || (m1+m2)/2 > n/2)
-        return -1;
+    if( seed <= 0 || n < 10 || n > 100 || (m1+m2) > n/2)
+        return 1;
 
     srnd(seed);
 
@@ -273,7 +273,7 @@ int main()
                     if(boostBefore[curP-1] > 0)
                     {
                         SetPlayerToPos(field,d,curP,hotspots);
-                        boostAfter[curP-1] = boostBefore[curP-1] -1;
+                        boostAfter[curP-1] = 0;
                     }
                     else
                         SetCell(field, d, EMPTY);
@@ -305,6 +305,6 @@ int main()
     printf("HOTSPOT:%d", GetHotspots(hotspots,n));
 
 
-    //while(1){}
+    while(1){}
     return 0;
 }
