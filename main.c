@@ -3,6 +3,15 @@
 
 #define R_MAX 2147483647
 static long long unsigned int SEED = 0x1;
+
+enum Cell{
+    EMPTY,
+    PLAYER1,
+    PLAYER2,
+    BLOCK,
+    BOOST
+};
+
 void srnd(int seed) {
   SEED = seed;
 }
@@ -37,7 +46,7 @@ void SetBlocks(int *field, int n, int m1)
         }
         while(!IsFree(field, rnd));
 
-        SetCell(field, rnd, 3);
+        SetCell(field, rnd, BLOCK);
 
         i++;
     }while(i<m1);
@@ -45,7 +54,7 @@ void SetBlocks(int *field, int n, int m1)
     printf("BLOCK:");
     for(int i=0; i<n;i++)
     {
-        if(field[i] == 3)
+        if(field[i] == BLOCK)
             printf("%d ", i);
     }
 }
@@ -61,7 +70,7 @@ void SetBoosts(int *field, int n, int m2)
         }
         while(!IsFree(field, rnd));
 
-        SetCell(field, rnd, 4);
+        SetCell(field, rnd, BOOST);
 
         i++;
     }while(i<m2);
@@ -69,12 +78,32 @@ void SetBoosts(int *field, int n, int m2)
     printf("BOOST:");
     for(int i=0; i<n;i++)
     {
-        if(field[i] == 4)
+        if(field[i] == BOOST)
             printf("%d ", i);
     }
 }
+
+PrintStep(int round, int player, int posBefore,int boostBefore,int r1,int r2,int posAfter,int boostAfter)
+{
+    printf("[%d,%d] [%d,%d] [%d,%d] [%d,%d]\n",round, player,posBefore,boostBefore,r1,r2,posAfter,boostAfter);
+}
 int main()
 {
+    int r1 = 0;
+    int r2 = 0;
+
+    int pos1before = 0;
+    int boost1before = 0;
+
+    int pos1after = 0;
+    int boost1after = 0;
+
+    int pos2before = 0;
+    int boost2before = 0;
+
+    int pos2after = 0;
+    int boost2after = 0;
+
     int seed = 11;
     int n = 50;
     int m1 = 15; //block
@@ -90,11 +119,21 @@ int main()
 
     int field[n];
     for(int i;i<n;i++)
-        field[i]=0;
+        field[i]=EMPTY;
+    int hotspots[n];
+    for(int i;i<n;i++)
+        hotspots[i]=EMPTY;
 
     SetBlocks(field, n, m1);
     printf("\n");
     SetBoosts(field, n, m2);
+    printf("\n");
+
+
+    while(1)
+    {
+        PrintStep(1,2,3,4,5,6,7,8);
+    }
 
     while(1){}
     return 0;
