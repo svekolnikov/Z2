@@ -108,16 +108,22 @@ void SetPlayerToPos(int *field, int pos, int player, int *hotspots)
     field[pos] = player;
     hotspots[pos]++;
 }
+void ClearCell(int *field, int pos)
+{
+    field[pos] = EMPTY;
+}
 int IsSecondPlayerFaster(int *field, int n, int player)
 {
-    curPlayer = GetPlayerPos(field,n,player);
-    nextPlayer = GetPlayerPos(field,n,3 -player);
+    int curPlayer = GetPlayerPos(field,n,player);
+    int nextPlayer = GetPlayerPos(field,n,3 -player);
 
     if(nextPlayer > curPlayer)
         return 1;
 
     return 0;
 }
+
+
 int main()
 {
     int r1 = 0;
@@ -174,7 +180,27 @@ int main()
             if(r1+r2 > 7)
             {
                 d = r1+r2 -7 + boostBefore[curP-1];
-                SetPlayerToPos(field,d,curP,hotspots);
+
+                int nextCell = field[d];
+                if(nextCell == BLOCK)
+                {
+                    SetCell(field, d, EMPTY);
+                    posAfter[curP-1] = posBefore[curP-1];
+                    boostAfter[curP-1] = boostBefore[curP-1] -1;
+                    return;
+                }
+                else if(nextCell == BOOST)
+                {
+                    SetCell(field, d, EMPTY);
+                    boostAfter[curP-1]++;
+                    SetPlayerToPos(field,d,curP,hotspots);
+                    return;
+                }
+                else if(nextCell == 3-curP) // opposite player
+                {
+                    SetPlayerToPos(field,d,curP,hotspots);
+                    return;
+                }
             }
         }
         else
