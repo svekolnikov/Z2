@@ -25,7 +25,7 @@ void SetCell(int *field, int pos, int value)
     field[pos] = value;
 }
 
-void SetBlocks()
+void SetBlocks(int *field, int n, int m1)
 {
     int i = 0;
     do
@@ -35,14 +35,44 @@ void SetBlocks()
         {
             rnd = GetRandom(1, n-1);
         }
-        while(!IsFree(&field), rnd);
+        while(!IsFree(field, rnd));
 
-        SetCell(&field, rnd, 3);
+        SetCell(field, rnd, 3);
 
         i++;
     }while(i<m1);
-}
 
+    printf("BLOCK:");
+    for(int i=0; i<n;i++)
+    {
+        if(field[i] == 3)
+            printf("%d ", i);
+    }
+}
+void SetBoosts(int *field, int n, int m2)
+{
+    int i = 0;
+    do
+    {
+        int rnd = 0;
+        do
+        {
+            rnd = GetRandom(1, n-1);
+        }
+        while(!IsFree(field, rnd));
+
+        SetCell(field, rnd, 4);
+
+        i++;
+    }while(i<m2);
+
+    printf("BOOST:");
+    for(int i=0; i<n;i++)
+    {
+        if(field[i] == 4)
+            printf("%d ", i);
+    }
+}
 int main()
 {
     int seed = 11;
@@ -62,8 +92,9 @@ int main()
     for(int i;i<n;i++)
         field[i]=0;
 
-
-
+    SetBlocks(field, n, m1);
+    printf("\n");
+    SetBoosts(field, n, m2);
 
     while(1){}
     return 0;
