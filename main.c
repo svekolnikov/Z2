@@ -150,12 +150,12 @@ int GetMax(int num1, int num2)
     else
         return num2;
 }
-void ExchangePlayers(int *field,int n)
+void ExchangePlayers(int *field,int n,int *hotspots)
 {
     int pos1 = GetPlayerPos(field, n, PLAYER1);
     int pos2 = GetPlayerPos(field, n, PLAYER2);
-    SetCell(field,pos2,PLAYER1);
-    SetCell(field,pos1,PLAYER2);
+    SetPlayerToPos(field,pos2,PLAYER1,hotspots);
+    SetPlayerToPos(field,pos1,PLAYER2,hotspots);
 }
 int main()
 {
@@ -168,10 +168,10 @@ int main()
     int posAfter[2] = {0};
     int boostAfter[2] = {0};
 
-    int seed = 11;
-    int n = 50;
-    int m1 = 15; //block
-    int m2 = 5;  // boost
+    int seed = 8;
+    int n = 100;
+    int m1 = 0; //block
+    int m2 = 50;  // boost
 
     scanf("%d %d %d %d", &seed, &n, &m1, &m2);
 
@@ -241,7 +241,7 @@ int main()
             if((((r1 == r2) && r1 == 6)&&IsSecondPlayerFaster(field,n,curP) == 1) ||
                (((r1 == r2) && r1 == 1)&&IsSecondPlayerFaster(field,n,curP) == 0))
             {
-                ExchangePlayers(field,n);
+                ExchangePlayers(field,n,hotspots);
                 posAfter[curP-1] = GetPlayerPos(field,n,curP);
             }
             else
@@ -286,6 +286,7 @@ int main()
                 else if(nextCell == 3-curP) // opposite player
                 {
                     SetPlayerToPos(field,d,curP,hotspots);
+                    posAfter[curP-1] = d;
                 }
             }
         }
