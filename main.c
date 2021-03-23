@@ -108,6 +108,16 @@ void SetPlayerToPos(int *field, int pos, int player, int *hotspots)
     field[pos] = player;
     hotspots[pos]++;
 }
+int IsSecondPlayerFaster(int *field, int n, int player)
+{
+    curPlayer = GetPlayerPos(field,n,player);
+    nextPlayer = GetPlayerPos(field,n,3 -player);
+
+    if(nextPlayer > curPlayer)
+        return 1;
+
+    return 0;
+}
 int main()
 {
     int r1 = 0;
@@ -169,6 +179,14 @@ int main()
         }
         else
         {
+            if(((r1 == r2) && r1 == 6)&&IsSecondPlayerFaster(field,n,curP) == 0)
+            {
+
+            }
+            if(((r1 == r2) && r1 == 1)&&IsSecondPlayerFaster(field,n,curP) == 1)
+            {
+
+            }
 
         }
 
