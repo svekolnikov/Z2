@@ -102,6 +102,12 @@ int GetPlayerPos(int *field,int n, int player)
 
     return -1;
 }
+
+void SetPlayerToPos(int *field, int pos, int player, int *hotspots)
+{
+    field[pos] = player;
+    hotspots[pos]++;
+}
 int main()
 {
     int r1 = 0;
@@ -157,7 +163,8 @@ int main()
             int d = 0;
             if(r1+r2 > 7)
             {
-                //d = 7 - r1+r2 +
+                d = r1+r2 -7 + boostBefore[curP-1];
+                SetPlayerToPos(field,d,curP,hotspots);
             }
         }
         else
@@ -166,7 +173,7 @@ int main()
         }
 
         round++;
-        PrintStep(round,curP,3,4,r1,r2,7,8);
+        PrintStep(round,curP,posBefore[curP-1],boostBefore[curP-1],r1,r2,posAfter[curP-1],boostAfter[curP-1]);
     }
 
     //Statistics
