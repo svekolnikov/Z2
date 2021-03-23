@@ -168,10 +168,10 @@ int main()
     int posAfter[2] = {0};
     int boostAfter[2] = {0};
 
-    int seed = 515;
-    int n = 51;
-    int m1 = 14; //block
-    int m2 = 8;  // boost
+    int seed = 111;
+    int n = 30;
+    int m1 = 15; // block
+    int m2 = 0;  // boost
 
     scanf("%d %d %d %d", &seed, &n, &m1, &m2);
 
@@ -222,6 +222,8 @@ int main()
                     posAfter[curP-1] = posBefore[curP-1];
                     if(boostBefore[curP-1] > 0)
                         boostAfter[curP-1] = boostBefore[curP-1] -1;
+
+                    hotspots[d]++;
 
                 }
                 else if(nextCell == BOOST)
@@ -276,7 +278,10 @@ int main()
                         boostAfter[curP-1] = 0;
                     }
                     else
+                    {
                         SetCell(field, d, EMPTY);
+                        hotspots[d]++;
+                    }
 
                     posAfter[curP-1] = GetPlayerPos(field,n,curP);
                 }
@@ -302,7 +307,7 @@ int main()
     //Statistics
     printf("WINNER:%d", GetWinner(posAfter));
     printf("\n");
-    printf("HOTSPOT:%d", GetHotspots(hotspots,n));
+    printf("HOTSPOT:%d", GetHotspots(hotspots,n)); // 3 6 9 10 17 23 35 // 1
 
 
     while(1){}
