@@ -309,7 +309,5 @@ int main()
     printf("\n");
     printf("HOTSPOT:%d", GetHotspots(hotspots,n)); // 3 6 9 10 17 23 35 // 1
 
-
-    while(1){}
     return 0;
 }
